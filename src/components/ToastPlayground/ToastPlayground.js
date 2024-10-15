@@ -5,48 +5,21 @@ import Button from "../Button";
 import styles from "./ToastPlayground.module.css";
 
 import ToastShelf from "../ToastShelf/ToastShelf";
+import { ToastContext } from "../ToastProvider/ToastProvider";
 
 const VARIANT_OPTIONS = ["notice", "warning", "success", "error"];
 
 function ToastPlayground() {
+    const { createToast } = React.useContext(ToastContext);
     const [variant, setVariant] = React.useState(VARIANT_OPTIONS[0]);
     const [message, setMessage] = React.useState("");
-    const [toasts, setToasts] = React.useState([
-        {
-            id: crypto.randomUUID(),
-            message: "oh no",
-            variant: "notice",
-        },
-        {
-            id: crypto.randomUUID(),
-            message: "oh yea",
-            variant: "success",
-        },
-    ]);
 
     function handleCreateToast(event) {
         event.preventDefault();
 
-        const nextToast = [
-            ...toasts,
-            {
-                id: crypto.randomUUID(),
-                message,
-                variant,
-            },
-        ];
-
-        setToasts(nextToast);
+        createToast(message, variant);
         setMessage("");
         setVariant(VARIANT_OPTIONS[0]);
-    }
-
-    function handleDismiss(id) {
-        const nextToasts = toasts.filter((toast) => {
-            return toast.id !== id;
-        });
-
-        setToasts(nextToasts);
     }
 
     return (
@@ -55,7 +28,7 @@ function ToastPlayground() {
                 <img alt='Cute toast mascot' src='/toast.png' />
                 <h1>Toast Playground</h1>
             </header>
-            <ToastShelf toasts={toasts} handleDismiss={handleDismiss} />
+            <ToastShelf />
 
             <form
                 className={styles.controlsWrapper}
